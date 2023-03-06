@@ -15,19 +15,23 @@ app.use(function (req, res, next) {
     if (req.method == "OPTIONS") res.sendStatus(200); //让options尝试请求快速结束
     else next();
 });
-
 app.use(express.json())
 
+// 处理文件上传
 const update = multer({
     dest: "./public/upload/temp"
 })
 app.use(update.any())
 
+// 路由设置
 app.get('/', (req, res) => {
     res.send('hello world')
 })
-app.use('/test', require('./routers'))
+app.use('/test', require('./routers/TestRouter'))
+app.use('/admin', require('./routers/AdminRouter'))
+app.use('/category', require('./routers/CategoryRouter'))
 
+// 监听端口
 app.listen(port, () => {
     console.log(`服务端启动成功: http://localhost:${port}/`)
 })
