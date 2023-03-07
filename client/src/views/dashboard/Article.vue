@@ -40,7 +40,7 @@ const tabValue = ref("list");
 //分页数据
 const pageInfo = reactive({
   page: 1,
-  pageSize: 3,
+  pagesize: 3,
   pageCount: 0,
   count: 0,
 });
@@ -53,10 +53,11 @@ onMounted(() => {
 //读取博客列表
 const loadBlogs = async () => {
   let res = await axios.get(
-    `/blog/search?page=${pageInfo.page}&pageSize=${pageInfo.pageSize}`
+    `/blog/search?page=${pageInfo.page}&pagesize=${pageInfo.pagesize}`
   );
+  // console.log(pageInfo.pagesize);
   let temp_rows = res.data.data.searchResult;
-
+  // console.log(res);
   for (let row of temp_rows) {
     row.content += "...";
     let d = new Date(row.create_time);
@@ -67,8 +68,8 @@ const loadBlogs = async () => {
   blogListInfo.value = temp_rows;
   pageInfo.count = res.data.data.count;
   pageInfo.pageCount =
-    parseInt(pageInfo.count / pageInfo.pageSize) +
-    (pageInfo.count % pageInfo.pageSize > 0 ? 1 : 0);
+    parseInt(pageInfo.count / pageInfo.pagesize) +
+    (pageInfo.count % pageInfo.pagesize > 0 ? 1 : 0);
   // console.log(res);
 };
 
@@ -87,9 +88,9 @@ const loadCategorys = async () => {
 const add = async () => {
   let res = await axios.post("/blog/_token/add", addArticle);
   if (res.data.code == 200) {
-    message.info(res.data.msg);
+    message.info(res.data.message);
   } else {
-    message.error(res.data.msg);
+    message.error(res.data.message);
   }
 };
 
@@ -110,22 +111,31 @@ const toUpdate = async (blog) => {
 const update = async () => {
   let res = await axios.put("/blog/_token/update", updateArticle);
   if (res.data.code == 200) {
-    message.info(res.data.msg);
+    message.info(res.data.message);
     loadBlogs();
     tabValue.value = "list";
   } else {
-    message.error(res.data.msg);
+    message.error(res.data.message);
   }
 };
 
 const toDelete = async (blog) => {
-  let res = await axios.delete("/blog/_token/delete?id=" + blog.id);
-  if (res.data.code == 200) {
-    message.info(res.data.msg);
-    loadBlogs();
-  } else {
-    message.error(res.data.msg);
-  }
+  dialog.warning({
+    title: "警告",
+    content: "是否要删除",
+    positiveText: "确定",
+    negativeText: "取消",
+    onPositiveClick: async () => {
+      let res = await axios.delete("/blog/_token/delete?id=" + blog.id);
+      if (res.data.code == 200) {
+        message.info(res.data.message);
+        loadBlogs();
+      } else {
+        message.error(res.data.message);
+      }
+    },
+    onNegativeClick: () => {},
+  });
 };
 </script>
 

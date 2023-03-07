@@ -3,6 +3,35 @@ const express = require("express")
 const { db, snowId } = require("../db/DbUtils")
 const router = express.Router()
 
+// 查询单篇
+router.get('/detail', async (req, res) => {
+    let { id } = req.query
+    try {
+        let detail_sql = `SELECT * FROM blog WHERE id = ?`
+        let rows = await db.query(detail_sql, [id])
+        if (rows.length > 0) {
+            res.send({
+                code: 200,
+                message: '查询成功',
+                rows
+            })
+        } else {
+            res.send({
+                code: 501,
+                message: '查询失败'
+            })
+        }
+    } catch (err) {
+        console.log(err)
+        res.send({
+            code: 500,
+            message: '获取失败'
+        })
+    }
+
+})
+
+
 // 查询博客
 router.get('/search', async (req, res) => {
     /**
@@ -15,19 +44,20 @@ router.get('/search', async (req, res) => {
      */
 
     let { keyword, categoryId, page, pagesize } = req.query
-    page = page == null ? 1 : page
-    pagesize = pagesize == null ? 10 : pagesize
+
+    page = page == null ? 1 : Number(page)
+    pagesize = pagesize == null ? 10 : Number(pagesize)
     categoryId = categoryId == null ? 0 : categoryId
     keyword = keyword == null ? '' : keyword
-
+    // console.log(pagesize)
     let params = []
     let where_sqls = []
     if (categoryId !== 0) {
-        where_sql.push(`category_id = ?`)
+        where_sqls.push(`category_id = ?`)
         params.push(categoryId)
     }
     if (keyword !== '') {
-        where_sql.push(`(title like ? OR content = ?)`)
+        where_sqls.push(`(title like ? OR content = ?)`)
         params.push(`%${keyword}%`)
         params.push(`%${keyword}%`)
     }
@@ -36,17 +66,19 @@ router.get('/search', async (req, res) => {
         where_sql = ' WHERE ' + where_sqls.join(' AND ')
     }
     // 查分页数据
-    let searchSqlStr = ' SELECT * FROM blog ' + where_sql + ' ORDER BY create_time DESC LIMIT ?,? '
+    let searchSqlStr = ` SELECT id, category_id, title,create_time, left(content,200) AS content FROM blog ` + where_sql + ' ORDER BY create_time DESC LIMIT ?,? '
     let searchParams = params.concat([(page - 1) * pagesize, pagesize])
+    // console.log(searchParams)
     // 查总数
     let searchCountSqlStr = ' SELECT count(*) AS count FROM blog ' + where_sql
     let searchCountParams = params
     try {
         // 分页数据
         let searchResult = await db.query(searchSqlStr, searchParams)
+        // console.log(searchResult)
         // 总数
         let countResult = await db.query(searchCountSqlStr, searchCountParams)
-        // console.log(countResult)
+        //console.log(countResult)
         if (searchResult.length > 0 && countResult.length > 0) {
             res.send({
                 code: 200,
