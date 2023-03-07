@@ -4,7 +4,7 @@ const { db, snowId } = require("../db/DbUtils")
 const fs = require("fs")
 const router = express.Router()
 
-router.post('/_token/rich_editor_upload', async (req, res) => {
+router.post('/rich_editor_upload', async (req, res) => {
 
     if (!req.files) {
         res.send({

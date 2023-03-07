@@ -55,7 +55,8 @@ const loadBlogs = async () => {
   let res = await axios.get(
     `/blog/search?page=${pageInfo.page}&pageSize=${pageInfo.pageSize}`
   );
-  let temp_rows = res.data.data.rows;
+  let temp_rows = res.data.data.searchResult;
+
   for (let row of temp_rows) {
     row.content += "...";
     let d = new Date(row.create_time);
@@ -68,7 +69,7 @@ const loadBlogs = async () => {
   pageInfo.pageCount =
     parseInt(pageInfo.count / pageInfo.pageSize) +
     (pageInfo.count % pageInfo.pageSize > 0 ? 1 : 0);
-  console.log(res);
+  // console.log(res);
 };
 
 //读取分类
@@ -80,7 +81,7 @@ const loadCategorys = async () => {
       value: item.id,
     };
   });
-  console.log(categortyOptions.value);
+  // console.log(categortyOptions.value);
 };
 
 const add = async () => {

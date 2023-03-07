@@ -46,7 +46,7 @@ router.get('/search', async (req, res) => {
         let searchResult = await db.query(searchSqlStr, searchParams)
         // 总数
         let countResult = await db.query(searchCountSqlStr, searchCountParams)
-        console.log(countResult)
+        // console.log(countResult)
         if (searchResult.length > 0 && countResult.length > 0) {
             res.send({
                 code: 200,
