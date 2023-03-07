@@ -47,7 +47,7 @@ router.get('/search', async (req, res) => {
 
     page = page == null ? 1 : Number(page)
     pagesize = pagesize == null ? 10 : Number(pagesize)
-    categoryId = categoryId == null ? 0 : categoryId
+    categoryId = categoryId == null ? 0 : Number(categoryId)
     keyword = keyword == null ? '' : keyword
     // console.log(pagesize)
     let params = []

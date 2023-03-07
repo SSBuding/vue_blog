@@ -99,8 +99,9 @@ const loadBlogs = async (page = 0) => {
   if (page != 0) {
     pageInfo.page = page;
   }
+  // console.log(pageInfo.categoryId);
   let res = await axios.get(
-    `/blog/search?keyword=${pageInfo.keyword}&page=${pageInfo.page}&pagesize=${pageInfo.pagesize}`
+    `/blog/search?keyword=${pageInfo.keyword}&page=${pageInfo.page}&pagesize=${pageInfo.pagesize}&categoryId=${pageInfo.categoryId}`
   );
   // console.log(pageInfo.pagesize);
   let temp_rows = res.data.data.searchResult;
@@ -113,6 +114,7 @@ const loadBlogs = async (page = 0) => {
     }月${d.getDate()}日`;
   }
   blogListInfo.value = temp_rows;
+  // console.log(blogListInfo.value);
   pageInfo.count = res.data.data.count;
   pageInfo.pageCount =
     parseInt(pageInfo.count / pageInfo.pagesize) +
@@ -124,6 +126,7 @@ const categoryName = computed(() => {
   let selectedOption = categortyOptions.value.find((option) => {
     return option.value == selectedCategory.value;
   });
+  //console.log(selectedCategory.value);
   //返回分类的名称
   return selectedOption ? selectedOption.label : "";
 });
@@ -133,21 +136,22 @@ const categoryName = computed(() => {
  */
 const loadCategorys = async () => {
   let res = await axios.get("/category/list");
-  //console.log(res);
+  // console.log(res);
   categortyOptions.value = res.data.rows.map((item) => {
     return {
       label: item.name,
       value: item.id,
     };
   });
-  // console.log(categortyOptions.value);
+  //console.log(categortyOptions.value);
 };
 
 /**
  * 选中分类
  */
-const searchByCategory = (categoryId) => {
-  pageInfo.categoryId = categoryId;
+const searchByCategory = (e) => {
+  // console.log(e);
+  pageInfo.categoryId = e;
   loadBlogs();
 };
 
@@ -195,6 +199,10 @@ const dashboard = () => {
 }
 
 .footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   text-align: center;
   line-height: 25px;
   color: #64676a;

@@ -20,6 +20,7 @@ const routes = [
     },
     {
         path: '/dashboard',
+        redirect: { name: 'article' },
         component: () => import('../views/dashboard/Dashboard.vue'),
         children:
             [
@@ -28,6 +29,7 @@ const routes = [
                     component: () => import('../views/dashboard/Category.vue'),
                 },
                 {
+                    name: 'article',
                     path: 'article',
                     component: () => import('../views/dashboard/Article.vue'),
                 }
