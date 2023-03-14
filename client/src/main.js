@@ -7,7 +7,7 @@ import { createDiscreteApi } from 'naive-ui'
 import axios from 'axios'
 import { useAdminStore } from "./stores"
 
-axios.defaults.baseURL = 'http://localhost:8019'
+axios.defaults.baseURL = 'http://8.130.14.128:8019'
 
 const { message, notification, dialog } = createDiscreteApi(["message", "dialog", "notification"])
 
